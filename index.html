@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Bubble Sort Visualization</title>
+    <link rel="stylesheet" type="text/css" href="index.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script type="text/javascript" src="sort.js"></script>
+</head>
+
+<body>
+    <div id="container">
+        <div id="header">
+            <h1> Sort Visualization</h1>
+        </div>
+
+        <div id="paramsDiv">
+            <input type="radio" id="duplicate" name="option">
+            <label for="duplicate">Many Duplicates</label>
+
+            <input type="radio" id="random" name="option">
+            <label for="random">Random Numbers</label>
+
+            <input type="radio" id="descending" name="option">
+            <label for="descending">Descending Order</label>
+
+            <label for="arrayInput" id="arrayLabel">Input your array:</label>
+            <input type="text" id="arrayInput" name="arrayInput" placeholder="8,4,2,1,3,7,5">
+
+            <!-- The Modal -->
+            <div id="myModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <span class="close">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <label for="modalInput">Enter your array:</label>
+                        <textarea id="modalInput" name="modalInput" rows="4" cols="50"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="arrayBtn">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="algoDiv">
+                <ul id="algo-list">
+                    <li id="bubble">Bubble Sort</li>
+                    <li id="selection">Selection Sort</li>
+                    <li id="insertion">Insertion Sort</li>
+                </ul>
+        </div>
+
+        <div id="visualDiv">
+            <svg></svg>
+        </div>
+
+        <div id="controlDiv">
+            <button id="sortStart">Start</button>
+            <button id="reset">Reset</button>
+        </div>
+
+        <div id="speedDiv">
+            <label for="speed-slider">Animation Speed</label>
+            <input type="range" id="speed-slider" min="200" max="2000" value="200">
+            <span id="speed-value">1x</span>
+        </div>
+    </div>
+</body>
+
+</html>
