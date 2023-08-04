@@ -2,7 +2,7 @@
 ## Introduction  
 This project is to visualize three sorting algorithms: Bubble Sort, Insertion Sort, and Selection Sort.
 You can clone this repository on GitHub to load html file on your browser to visualize the sorting algorithms, or you can visit the link below to just play around.
-[Sorting Algorithms Visualizer](https://www.example.com)
+[Sorting Algorithms Visualizer](https://sorting-visualizer-hw7.netlify.app)
 ## Usage  
 The usage of this project is as follows:
 - radio button to select the data patterns(randdom, decending, many duplicates)
