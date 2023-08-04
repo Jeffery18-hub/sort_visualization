@@ -1,13 +1,20 @@
-let data = [8,4,2,1,3,7,5];
+let data = [8,4,2,1,3,7,5]; // initial data to be sorted when the page loads
 let recentData = JSON.parse(JSON.stringify(data));
 let algoChosen = 'bubble';
 let isStarted = false;
 let animateController = new AbortController();
 
 
+/**
+ * Initializes the window when it is loaded.
+ *
+ * @param {type} None - No parameters needed.
+ * @return {type} None - No return value.
+ */
 window.onload = function () {
     init();
 }
+
 
 let init= function(){
     d3.select("#bubble").classed("selected", true); // init algo choice to bubble
@@ -19,6 +26,14 @@ let init= function(){
     addResetBtnListener();
     renderRects(data);
 }
+
+
+/**
+ * Adds a listener to the start button and triggers an animation when clicked.
+ *
+ * @param {type} No parameters are required.
+ * @return {type} No return value.
+ */
 
 let addStartBtnListener = function () {
     let startBtn = d3.select('#sortStart');
@@ -32,6 +47,12 @@ let addStartBtnListener = function () {
 
 }
 
+/**
+ * Adds a listener to the reset button and calls the reset function when clicked.
+ *
+ * @param {None} None - This function does not take any parameters.
+ * @return {None} This function does not return any value.
+ */
 let addResetBtnListener = function () {
     let resetBtn = d3.select('#reset');
     resetBtn.on('click', () => {
@@ -39,6 +60,11 @@ let addResetBtnListener = function () {
     });
 }
 
+/**
+ * adds a listener to the radio buttons, where the data pattern is selected.
+ *
+ * @return {undefined} This function does not have a return value.
+ */
 let addRadioBtnListener = function () {
     let radioBtn = d3.selectAll('input[name="option"]');
     radioBtn.on('click', function() {
@@ -60,9 +86,15 @@ let addRadioBtnListener = function () {
 };
 
 
+/**
+ * Generates an array input based on the selected radio id.
+ *
+ * @param {string} selectedRadioId - The id of the selected radio button.
+ * @return {array} The generated array input.
+ */
 let generateArrayInput = function (selectedRadioId) {
     if(selectedRadioId === 'duplicate') {
-        return generateRandomIntegersWithDuplicates(10,4);
+        return generateRandomIntegersWithDuplicates(10,5);
     }else if(selectedRadioId === 'random') {
         return generateRandomIntegers(10);
     }else if(selectedRadioId === 'descending') {
@@ -73,7 +105,7 @@ let generateArrayInput = function (selectedRadioId) {
 let generateRandomIntegers= function(count) {
     let integers = [];
     for (let i = 0; i < count; i++) {
-      integers.push(Math.floor(Math.random() * 10) + 1);
+      integers.push(Math.floor(Math.random() * 100) + 1);
     }
     return integers;
   }
@@ -85,7 +117,7 @@ let generateRandomIntegersWithDuplicates = function(count, numDuplicates) {
   
     let integers = [];
     for (let i = 0; i < count - numDuplicates; i++) {
-      integers.push(Math.floor(Math.random() * 10) + 1);
+      integers.push(Math.floor(Math.random() * 100) + 1);
     }
   
     // Adding duplicates
@@ -100,7 +132,7 @@ let generateRandomIntegersWithDuplicates = function(count, numDuplicates) {
 let generateDescendingIntegers= function(count) {
     let integers = [];
     for (let i = 0; i < count; i++) {
-      integers.push(Math.floor(Math.random() * 10) + 1);
+      integers.push(Math.floor(Math.random() * 100) + 1);
     }
   
     integers.sort((a, b) => b - a);
@@ -108,12 +140,27 @@ let generateDescendingIntegers= function(count) {
   }
   
 
+/**
+ * add a listener to the speed slider to change the speed of the animation.
+ *
+ * @param {type} paramName - none
+ * @return {type} none
+ */
 let addSliderListener = function () {
     let input = document.getElementById('speed-slider');
     let speedVal = document.getElementById('speed-value');
     input.addEventListener('input', () => speedVal.innerText = (input.value / input.min).toFixed(1) + 'x');
 }
 
+
+/**
+ * Adds a listener to the array input element to open a modal when clicked.
+ * Closes the modal when the close button is clicked or when the user clicks outside the modal.
+ * Submits the array input and performs validation checks before updating the data and rendering the rectangles.
+ * 
+ * @param {type} paramName - none
+ * @return {type} none
+ */
 let addArrayModalListener = function () {
     // Get the modal
     let modal = document.getElementById("myModal");
@@ -168,6 +215,13 @@ let addArrayModalListener = function () {
     })
 }
 
+
+/**
+ * Adds a listener to the algorithm list items.
+ *
+ * @param {type} - No parameters.
+ * @return {type} - No return value.
+ */
 let addAlgoListsListener = function () {
     d3.select("#algo-list")
         .selectAll("li")
@@ -180,15 +234,28 @@ let addAlgoListsListener = function () {
         });
 }
 
+/**
+ * Render rectangles based on the given data.
+ *
+ * @param {Array} data - The data used to render the rectangles.
+ * @return {undefined} This function does not return a value.
+ */
 let renderRects = function (data) {
     let canvas = d3.select("svg").selectAll("*")
     if (canvas.size() > 0)canvas.remove();
 
     let svgWidth = parseInt(d3.select('svg').style('width'));
+    let svgHeight = parseInt(d3.select('svg').style('height'));
     let xScale = d3.scaleBand()  // ordinal scale
         .domain(d3.range(data.length))  // set domain
         .range([svgWidth / 8, svgWidth * 7 / 8])  // set range, middle of the svg
         .paddingInner(0.1);  // add some paddings around the rects
+    
+    let padding = 100;
+    let buffer = 5;  // add a buffer value
+    let yScale = d3.scaleLinear()
+        .domain([0, d3.max(data)+buffer])
+        .range([0, svgHeight - padding]); // scale for height
 
     d3.select('svg')
         .selectAll('g') // as a group: rectangles with integers
@@ -199,17 +266,22 @@ let renderRects = function (data) {
                 let rects = groups.append('rect')
                     .attr('x', (d, i) => xScale(i))
                     .attr('width', xScale.bandwidth())
-                    .attr('height', d => d * 50)
-                    .attr('y', 20)
+                    .attr('height', d => yScale(d))
+                    .attr('y', d=>svgHeight - padding-yScale(d))
                     .style('fill', 'blue');
                 let labels = groups.append('text')
                     .attr('x', (d, i) => xScale(i)+xScale.bandwidth()/2)
-                    .attr('y', d => d * 50 + 40)
+                    .attr('y', d => svgHeight - padding-yScale(d)-5)
                     .text(d => d);
             }
             );
 }
 
+/**
+ * An async function that animates a sorting algorithm based on the value of the `algoChosen` variable.
+ *
+ * @return {Promise} A promise that resolves when the sorting animation is complete.
+ */
 let animate = async function () {
     const signal = animateController.signal; 
     try {
